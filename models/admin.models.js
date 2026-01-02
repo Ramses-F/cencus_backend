@@ -18,8 +18,7 @@ const adminSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index
-adminSchema.index({ email: 1 });
+// Note: L'index sur email est automatiquement créé par unique: true
 
 // Configuration pour inclure les virtuels dans JSON
 adminSchema.set('toJSON', { 

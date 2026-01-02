@@ -49,7 +49,7 @@ const censusRecordSchema = new mongoose.Schema({
 });
 
 // Index pour améliorer les recherches
-censusRecordSchema.index({ lotNumber: 1 });
+// Note: L'index sur lotNumber est automatiquement créé par unique: true
 censusRecordSchema.index({ familyName: 1 });
 censusRecordSchema.index({ createdAt: -1 });
 censusRecordSchema.index({ statut: 1 });
