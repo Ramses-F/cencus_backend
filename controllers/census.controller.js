@@ -57,8 +57,8 @@ exports.createRecord = async (req, res) => {
 exports.getAllRecords = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const limit = parseInt(req.query.limit) || 0; // 0 = pas de limite
+    const skip = limit > 0 ? (page - 1) * limit : 0;
 
     // Filtres optionnels
     const filter = {};
@@ -70,10 +70,14 @@ exports.getAllRecords = async (req, res) => {
     }
 
     // Récupérer les enregistrements
-    const records = await CensusRecord.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+    const query = CensusRecord.find(filter).sort({ createdAt: -1 }).skip(skip);
+    
+    // Appliquer la limite seulement si elle est définie
+    if (limit > 0) {
+      query.limit(limit);
+    }
+    
+    const records = await query;
 
     // Compter le total
     const total = await CensusRecord.countDocuments(filter);
@@ -83,7 +87,7 @@ exports.getAllRecords = async (req, res) => {
       count: records.length,
       total,
       page,
-      pages: Math.ceil(total / limit),
+      pages: limit > 0 ? Math.ceil(total / limit) : 1,
       data: records
     });
 
